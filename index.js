@@ -1,14 +1,20 @@
 const express = require('express');
 const http = require('http');
-const socketIO = require('socket.io');
+const { Server } = require('socket.io');
 const cors = require('cors');
 
 const app = express();
 app.use(cors());
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
+let currentQuestionIndex = 0;
 const questions = [
   {
     question: "Who is the CEO of IndroydLabs?",
@@ -37,29 +43,28 @@ const questions = [
   }
 ];
 
-let currentQuestionIndex = 0;
-
 io.on('connection', (socket) => {
   console.log('New client connected');
-
+  
+  // Send the current question when a player joins
   socket.emit('question', questions[currentQuestionIndex]);
 
-  socket.on('answer', (data) => {
-    const { player, answer } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+  socket.on('submit_answer', (data) => {
+    const { answer, playerName } = data;
+    const correctAnswer = questions[currentQuestionIndex].answer;
 
     if (answer === correctAnswer) {
-      io.emit('result', { player, result: 'correct' });
-      currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
-        setTimeout(() => {
-          io.emit('question', questions[currentQuestionIndex]);
-        }, 2000);
-      } else {
-        io.emit('end_game', { message: "Game Completed. Thanks for participating!" });
-      }
+      io.emit('result', { result: 'correct', player: playerName });
     } else {
-      socket.emit('result', { player, result: 'wrong' });
+      io.emit('result', { result: 'wrong', player: playerName });
+    }
+
+    // Move to next question or end game
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      io.emit('question', questions[currentQuestionIndex]);
+    } else {
+      io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
     }
   });
 
@@ -69,5 +74,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(4000, () => {
-  console.log('Server is running on port 4000');
+  console.log('Listening on port 4000');
 });
