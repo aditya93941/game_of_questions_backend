@@ -15,6 +15,7 @@ const io = new Server(server, {
 });
 
 let currentQuestionIndex = 0;
+
 const questions = [
   {
     question: "Who is the CEO of IndroydLabs?",
@@ -45,24 +46,33 @@ const questions = [
 
 io.on('connection', (socket) => {
   console.log('New client connected');
-  
-  socket.emit('question', questions[currentQuestionIndex]);
+
+  socket.on('resume_game', (data) => {
+    const { questionIndex } = data;
+    if (questionIndex < questions.length) {
+      socket.emit('question', { ...questions[questionIndex], index: questionIndex });
+    }
+  });
+
+  socket.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
 
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer; // Use correctAnswer key
+    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
 
     if (answer === correctAnswer) {
       io.emit('result', { result: 'correct', player: playerName });
+
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        io.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
+      } else {
+        io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
+        currentQuestionIndex = 0;
+      }
     } else {
       io.emit('result', { result: 'wrong', player: playerName });
-    }
-
-    if (currentQuestionIndex < questions.length - 1) {
-      currentQuestionIndex++;
-      io.emit('question', questions[currentQuestionIndex]);
-    } else {
-      io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
+      socket.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
     }
   });
 
