@@ -17,27 +17,27 @@ const io = new Server(server, {
 let currentQuestionIndex = 0;
 const questions = [
   {
-    question: "Who is the CEO of IndroydLabs?",
+    question: "1.Who is the CEO of IndroydLabs?",
     options: ["Shikhar Raj Agarwal", "Jane Smith", "Rohit Sharma", "Amit Kumar"],
     correctAnswer: "Shikhar Raj Agarwal"
   },
   {
-    question: "What type of games does IndroydLabs manufacture?",
+    question: "2.What type of games does IndroydLabs manufacture?",
     options: ["Board Games", "Arcade Games and VR Simulators", "Mobile Games", "Puzzle Games"],
     correctAnswer: "Arcade Games and VR Simulators"
   },
   {
-    question: "What technology does IndroydLabs use for payment solutions in entertainment venues?",
+    question: "3.What technology does IndroydLabs use for payment solutions in entertainment venues?",
     options: ["QR Code Payments", "Blockchain Technology", "RFID-based Payment Solutions", "Credit Card Processing"],
     correctAnswer: "RFID-based Payment Solutions"
   },
   {
-    question: "Which of the following venues can benefit from IndroydLabs' RFID solutions?",
+    question: "4.Which of the following venues can benefit from IndroydLabs' RFID solutions?",
     options: ["Amusement Parks", "Restaurants", "Hotels", "Grocery Stores"],
     correctAnswer: "Amusement Parks"
   },
   {
-    question: "What type of marketing solutions does IndroydLabs provide for brands?",
+    question: "5.What type of marketing solutions does IndroydLabs provide for brands?",
     options: ["Traditional Advertising", "Experiential Marketing Solutions", "Online Marketing", "Affiliate Marketing"],
     correctAnswer: "Experiential Marketing Solutions"
   }
@@ -67,7 +67,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle client disconnection
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
