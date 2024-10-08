@@ -14,7 +14,7 @@ const io = new Server(server, {
   }
 });
 
-let currentQuestionIndex = 0; // Tracks the current question
+let currentQuestionIndex = 0;
 const questions = [
   {
     question: "Who is the CEO of IndroydLabs?",
@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+    const correctAnswer = questions[currentQuestionIndex].answer;
 
     if (answer === correctAnswer) {
       io.emit('result', { result: 'correct', player: playerName });
@@ -63,7 +63,6 @@ io.on('connection', (socket) => {
       io.emit('question', questions[currentQuestionIndex]);
     } else {
       io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
-      currentQuestionIndex = 0; // Reset for the next game
     }
   });
 
