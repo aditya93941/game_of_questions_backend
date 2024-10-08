@@ -15,7 +15,6 @@ const io = new Server(server, {
 });
 
 let currentQuestionIndex = 0;
-
 const questions = [
   {
     question: "Who is the CEO of IndroydLabs?",
@@ -46,36 +45,32 @@ const questions = [
 
 io.on('connection', (socket) => {
   console.log('New client connected');
+  
+  // Send the current question to the new client
+  socket.emit('question', questions[currentQuestionIndex]);
 
-  socket.on('resume_game', (data) => {
-    const { questionIndex } = data;
-    if (questionIndex < questions.length) {
-      socket.emit('question', { ...questions[questionIndex], index: questionIndex });
-    }
-  });
-
-  socket.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
-
+  // Handle answer submission
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+    const correctAnswer = questions[currentQuestionIndex].correctAnswer;  // Fixed property
 
+    // Check if the answer is correct
     if (answer === correctAnswer) {
-      io.emit('result', { result: 'correct', player: playerName });
-
-      if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex++;
-        io.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
-      } else {
-        io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
-        currentQuestionIndex = 0;
-      }
+      io.emit('result', { result: 'correct', player: playerName, answer });
     } else {
-      io.emit('result', { result: 'wrong', player: playerName });
-      socket.emit('question', { ...questions[currentQuestionIndex], index: currentQuestionIndex });
+      io.emit('result', { result: 'wrong', player: playerName, answer });
+    }
+
+    // Move to the next question if there are more questions
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      io.emit('question', questions[currentQuestionIndex]);  // Send next question to all clients
+    } else {
+      io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
     }
   });
 
+  // Handle client disconnection
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
