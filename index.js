@@ -14,7 +14,7 @@ const io = new Server(server, {
   }
 });
 
-let currentQuestionIndex = 0;
+let currentQuestionIndex = 0; // Always keep track of the current question index
 const questions = [
   {
     question: "Who is the CEO of IndroydLabs?",
@@ -46,25 +46,26 @@ const questions = [
 io.on('connection', (socket) => {
   console.log('New client connected');
   
-  // Send the current question to the new client
-  socket.emit('question', questions[currentQuestionIndex]);
-
+  // Reset the game for all connected clients when a new device connects
+  currentQuestionIndex = 0;  // Reset to the first question on any new connection
+  io.emit('question', questions[currentQuestionIndex]);  // Broadcast the first question to all clients
+  
   // Handle answer submission
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;  // Fixed property
+    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
 
-    // Check if the answer is correct
+    // Broadcast whether the answer was correct or wrong to all clients
     if (answer === correctAnswer) {
       io.emit('result', { result: 'correct', player: playerName, answer });
     } else {
       io.emit('result', { result: 'wrong', player: playerName, answer });
     }
 
-    // Move to the next question if there are more questions
+    // Move to the next question and send to all clients
     if (currentQuestionIndex < questions.length - 1) {
       currentQuestionIndex++;
-      io.emit('question', questions[currentQuestionIndex]);  // Send next question to all clients
+      io.emit('question', questions[currentQuestionIndex]);  // Broadcast the next question
     } else {
       io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
     }
