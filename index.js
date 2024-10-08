@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer; // Corrected key here
+    const correctAnswer = questions[currentQuestionIndex].correctAnswer; // Use correctAnswer key
 
     if (answer === correctAnswer) {
       io.emit('result', { result: 'correct', player: playerName });
@@ -58,7 +58,6 @@ io.on('connection', (socket) => {
       io.emit('result', { result: 'wrong', player: playerName });
     }
 
-    // Move to next question or end game
     if (currentQuestionIndex < questions.length - 1) {
       currentQuestionIndex++;
       io.emit('question', questions[currentQuestionIndex]);
