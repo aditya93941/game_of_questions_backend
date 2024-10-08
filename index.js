@@ -45,7 +45,9 @@ const questions = [
 
 io.on('connection', (socket) => {
   console.log('New client connected');
-  socket.emit('question', questions[currentQuestionIndex]);
+  
+  currentQuestionIndex = 0;
+  io.emit('question', questions[currentQuestionIndex]);
 
   socket.on('submit_answer', (data) => {
     const { answer, playerName } = data;
@@ -54,10 +56,9 @@ io.on('connection', (socket) => {
     if (answer === correctAnswer) {
       io.emit('result', { result: 'correct', player: playerName, answer });
       
-      // Move to the next question only if the answer is correct
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
-        io.emit('question', questions[currentQuestionIndex]);
+        io.emit('question', questions[currentQuestionIndex]); 
       } else {
         io.emit('end_game', { message: 'Game Completed. Thanks for participating!' });
       }
@@ -65,6 +66,8 @@ io.on('connection', (socket) => {
       io.emit('result', { result: 'wrong', player: playerName, answer });
     }
   });
+
+  // Handle client disconnection
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
