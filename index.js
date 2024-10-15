@@ -17,30 +17,35 @@ const io = new Server(server, {
 let currentQuestionIndex = 0;
 const questions = [
   {
-    question: "1.Who is the CEO of IndroydLabs?",
-    options: ["Shikhar Raj Agarwal", "Jane Smith", "Rohit Sharma", "Amit Kumar"],
-    correctAnswer: "Shikhar Raj Agarwal"
-  },
-  {
-    question: "2.What type of games does IndroydLabs manufacture?",
-    options: ["Board Games", "Arcade Games and VR Simulators", "Mobile Games", "Puzzle Games"],
-    correctAnswer: "Arcade Games and VR Simulators"
-  },
-  {
-    question: "3.What technology does IndroydLabs use for payment solutions in entertainment venues?",
-    options: ["QR Code Payments", "Blockchain Technology", "RFID-based Payment Solutions", "Credit Card Processing"],
-    correctAnswer: "RFID-based Payment Solutions"
-  },
-  {
-    question: "4.Which of the following venues can benefit from IndroydLabs' RFID solutions?",
-    options: ["Amusement Parks", "Restaurants", "Hotels", "Grocery Stores"],
-    correctAnswer: "Amusement Parks"
-  },
-  {
-    question: "5.What type of marketing solutions does IndroydLabs provide for brands?",
-    options: ["Traditional Advertising", "Experiential Marketing Solutions", "Online Marketing", "Affiliate Marketing"],
-    correctAnswer: "Experiential Marketing Solutions"
+    question: "Why are you here today?",
+    options: ["To bring you on board", "To see if you're the one", "To assess your skills", "To check if you bring coffee with you"],
+    correctAnswer: "To bring you on board"
   }
+,
+  {
+    question: "What do you call a programmer who loves nature?",
+    options: ["A code farmer", "A debugger", "A tree maker", "An eco-logical coder"],
+    correctAnswer: "A code farmer"
+  }
+,
+  {
+    question: "What motivates you to keep coding?",
+    options: ["Solving complex problems", "Seeing my code come to life", "Fixing bugs", "The sound of the keyboard"],
+    correctAnswer: "Seeing my code come to life"
+ }
+,
+  {
+    question: "What’s your favorite excuse when your code breaks?",
+    options: ["It worked yesterday!", "The server's down", "It’s a feature, not a bug", "I didn’t touch it!"],
+    correctAnswer: "It’s a feature, not a bug"
+  }
+,
+  {
+    question: "How do you feel about comments in code?",
+    options: ["They’re essential", "Only when absolutely necessary", "I prefer minimal comments", "Comments? What comments?"],
+    correctAnswer: "They’re essential"
+  }
+
 ];
 
 io.on('connection', (socket) => {
